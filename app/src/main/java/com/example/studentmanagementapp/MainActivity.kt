@@ -12,8 +12,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val db = FirebaseFirestore.getInstance()
-    private val studentsList = mutableListOf<Student>()
-    private lateinit var adapter: StudentAdapter
+    private val studentsList = mutableListOf<Employee>()
+    private lateinit var adapter: EmployeeAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
 
         fetchStudents()
 
-       adapter = StudentAdapter(studentsList,
+       adapter = EmployeeAdapter(studentsList,
             onItemClick = { student ->
                 val intent = Intent(this, AddEditActivity::class.java)
                 intent.putExtra("studentId", student.id)
@@ -60,8 +60,8 @@ class MainActivity : AppCompatActivity() {
                 }
                 studentsList.clear()
                 snapshot?.forEach { doc -> 
-                    val student = doc.toObject(Student::class.java)
-                    studentsList.add(student)
+                    val employee = doc.toObject(Employee::class.java)
+                    studentsList.add(employee)
                 }
                 adapter.notifyDataSetChanged()
             }

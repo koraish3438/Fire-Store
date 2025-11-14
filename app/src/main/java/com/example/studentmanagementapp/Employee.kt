@@ -1,6 +1,6 @@
 package com.example.studentmanagementapp
 
-data class Student(
+data class Employee(
     var id: String = "",
     var name: String = "",
     var department: String = "",
