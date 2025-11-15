@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">Student Management App</string>
+    <string name="add_edit_employee_profile">Add/Edit Employee Profile</string>
+    <string name="employee_id">Employee ID</string>
+    <string name="name">Name</string>
+    <string name="nid_passport_number">NID/Passport Number</string>
+    <string name="date_of_birth_yyyy_mm_dd">Date of Birth (YYYY-MM-DD)</string>
+    <string name="gender">Gender</string>
+    <string name="marital_status">Marital Status</string>
+    <string name="email">Email</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="full_address">Full Address</string>
+    <string name="department">Department</string>
+    <string name="position_designation">Position/Designation</string>
+    <string name="salary_bdt">Salary (BDT)</string>
+    <string name="save_employee">Save Employee</string>
 </resources>

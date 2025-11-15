@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.StudentManagementApp">
         <activity
+            android:name=".EmployeeDetailsActivity"
+            android:exported="false" />
+        <activity
             android:name=".AddEditActivity"
             android:exported="false" />
         <activity
