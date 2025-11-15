@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.studentmanagementapp.databinding.ActivityEmployeeDetailsBinding
 import com.example.studentmanagementapp.databinding.ActivityMainBinding
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
@@ -23,29 +24,62 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setRecyclerView()
-        fetchDataFromFirestore()
+        setupRecyclerView()
+        fetchEmployees()
 
         binding.btnAddProfile.setOnClickListener {
             startActivity(Intent(this, AddEditActivity::class.java))
         }
     }
 
-    private fun setRecyclerView() {
+    private fun setupRecyclerView() {
         adapter = EmployeeAdapter(
             employees = employeeList,
+            onItemClick = { employee ->
+                val intent = Intent(this, EmployeeDetailsActivity::class.java)
+                intent.putExtra("firebaseDocId", employee.firebaseDocId)
+                intent.putExtra("employeeId", employee.employeeId)
+                intent.putExtra("name", employee.name)
+                intent.putExtra("dob", employee.dob)
+                intent.putExtra("gender", employee.gender)
+                intent.putExtra("maritalStatus", employee.maritalStatus)
+                intent.putExtra("nidOrPass", employee.nidOrPass)
+                intent.putExtra("email", employee.email)
+                intent.putExtra("phone", employee.phone)
+                intent.putExtra("address", employee.address)
+                intent.putExtra("department", employee.department)
+                intent.putExtra("position", employee.position)
+                intent.putExtra("salary", employee.salary)
+                startActivity(intent)
+            },
             onEditClick = { employee ->
                 val intent = Intent(this, AddEditActivity::class.java)
-                intent.putExtra("employee", employee)
+                intent.putExtra("firebaseDocId", employee.firebaseDocId)
+                intent.putExtra("employeeId", employee.employeeId)
+                intent.putExtra("name", employee.name)
+                intent.putExtra("dob", employee.dob)
+                intent.putExtra("gender", employee.gender)
+                intent.putExtra("maritalStatus", employee.maritalStatus)
+                intent.putExtra("nidOrPass", employee.nidOrPass)
+                intent.putExtra("email", employee.email)
+                intent.putExtra("phone", employee.phone)
+                intent.putExtra("address", employee.address)
+                intent.putExtra("department", employee.department)
+                intent.putExtra("position", employee.position)
+                intent.putExtra("salary", employee.salary)
                 startActivity(intent)
             },
             onDeleteClick = { employee ->
-                deleteEmployee(employee)
-            },
-            onItemClick = { employee ->
-                val intent = Intent(this, EmployeeDetailsActivity::class.java)
-                intent.putExtra("employee", employee)
-                startActivity(intent)
+                employee.firebaseDocId?.let { id ->
+                    db.collection("employee").document(id)
+                        .delete()
+                        .addOnSuccessListener {
+                            Toast.makeText(this, "Employee deleted", Toast.LENGTH_SHORT).show()
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(this, "Delete failed: ${it.message}", Toast.LENGTH_SHORT).show()
+                        }
+                }
             }
         )
 
@@ -53,36 +87,20 @@ class MainActivity : AppCompatActivity() {
         binding.recyclerViewProfiles.layoutManager = LinearLayoutManager(this)
     }
 
-    private fun fetchDataFromFirestore() {
+    private fun fetchEmployees() {
         snapshotListener = db.collection("employee")
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
-                    Toast.makeText(this, "Error fetching data: ${error.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
+                    return@addSnapshotListener
                 }
-
                 employeeList.clear()
-                snapshot?.documents?.forEach { document ->
-                    val employees = document.toObject(Employee::class.java)
-                    if(employees != null) {
-                        employees.firebaseDocId = document.id
-                        employeeList.add(employees)
-                    }
+                snapshot?.documents?.forEach { doc ->
+                    val emp = doc.toObject(Employee::class.java)
+                    emp?.firebaseDocId = doc.id
+                    emp?.let { employeeList.add(it) }
                 }
                 adapter.notifyDataSetChanged()
-            }
-
-    }
-
-    private fun deleteEmployee(employee: Employee) {
-        val docId = employee.firebaseDocId?: return
-
-        db.collection("employee").document(docId)
-            .delete()
-            .addOnSuccessListener {
-                Toast.makeText(this, "Employee deleted successfully", Toast.LENGTH_SHORT).show()
-            }
-            .addOnFailureListener { e ->
-                Toast.makeText(this, "Error deleting employee: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
 

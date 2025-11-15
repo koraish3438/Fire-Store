@@ -14,4 +14,4 @@ data class Employee(
     val department: String = "",
     val position: String = "",
     val salary: String = ""
-): java.io.Serializable
+)
